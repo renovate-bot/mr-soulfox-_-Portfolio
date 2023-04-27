@@ -7,3 +7,5 @@ lib
 *.txt
 .vscode
 auto
+*.env
+.env
