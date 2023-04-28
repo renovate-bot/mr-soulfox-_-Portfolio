@@ -5,18 +5,18 @@ export interface IMiddlewareAuth {
 }
 
 export class MiddlewareAuth implements IMiddlewareAuth {
-	oAuth(req: Request, res: Response, next: NextFunction) {
+	public static authenticator(token: string): boolean {
+		if (token === 'development' && process.env.DEVELOPMENT == 'true') {
+			return true;
+		}
+
+		return false;
+	}
+
+	oAuth(req: Request, res: Response, next?: NextFunction) {
 		const token = req.headers.authorization?.replace('Bearer', '');
 
-		const tokenIsValid = (): boolean => {
-			if (token === 'development' && process.env.DEVELOPMENT == 'true') {
-				return true;
-			}
-
-			return false;
-		};
-
-		if (!tokenIsValid()) {
+		if (!MiddlewareAuth.authenticator(String(token))) {
 			res.status(401).json({
 				error: 'Your token is invalid',
 			});
@@ -24,6 +24,8 @@ export class MiddlewareAuth implements IMiddlewareAuth {
 			return;
 		}
 
-		next();
+		if (next) {
+			next();
+		}
 	}
 }

@@ -4,5 +4,6 @@ export default defineConfig({
 	test: {
 		watch: false,
 		globals: true,
+		globalSetup: ['./__test__/utils/setup/testServer.ts'],
 	},
 });
