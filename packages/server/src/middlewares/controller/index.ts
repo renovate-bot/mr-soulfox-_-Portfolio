@@ -1,6 +1,8 @@
 import type {IMiddlewareAuth} from '../services/oAuth';
-import {MiddlewareAuth} from '../services/oAuth';
+
 import {Router} from 'express';
+
+import {MiddlewareAuth} from '../services/oAuth';
 
 interface MiddlewareControllerInjection {
 	authenticator: IMiddlewareAuth;

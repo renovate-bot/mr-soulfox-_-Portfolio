@@ -7,7 +7,7 @@ export interface IStorageDelRoute {
 export class StorageDelRoute implements IStorageDelRoute {
 	public del(req: Request, res: Response) {
 		res.status(200).json({
-			status: `Remove image by id (${req.params.imageID})`,
+			status: `Remove image by id (${req.params.foldername}/${req.params.imageID})`,
 		});
 	}
 }

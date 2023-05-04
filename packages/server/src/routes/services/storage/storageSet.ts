@@ -5,9 +5,9 @@ export interface IStorageSetRoute {
 }
 
 export class StorageSetRoute implements IStorageSetRoute {
-	public set(_req: Request, res: Response) {
+	public set(req: Request, res: Response) {
 		res.status(200).json({
-			status: `Added image`,
+			status: `Added image in ${req.params.foldername}`,
 		});
 	}
 }
