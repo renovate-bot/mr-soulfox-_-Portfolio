@@ -1,4 +1,5 @@
 import {describe, expect, it} from 'vitest';
+
 import {makeRequest} from '../utils/makeRequest';
 
 describe('Test middleware to authenticate user', () => {

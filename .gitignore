@@ -9,3 +9,9 @@ lib
 auto
 *.env
 .env
+*.log
+coverage
+temp/*.jpg
+temp/*.jpeg
+temp/*.png
+temp/*.svg

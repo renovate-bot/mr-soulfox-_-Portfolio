@@ -5,5 +5,8 @@ export default defineConfig({
 		watch: false,
 		globals: true,
 		globalSetup: ['./__test__/utils/setup/testServer.ts'],
+		coverage: {
+			reportsDirectory: './__test__/coverage',
+		},
 	},
 });
