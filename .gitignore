@@ -6,7 +6,6 @@ lib
 .yarn
 *.txt
 .vscode
-auto
 *.env
 .env
 *.log
