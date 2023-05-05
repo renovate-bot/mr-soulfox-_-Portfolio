@@ -10,7 +10,7 @@ lib
 .env
 *.log
 coverage
-temp/*.jpg
-temp/*.jpeg
-temp/*.png
-temp/*.svg
+*.jpg
+*.jpeg
+*.png
+*.svg

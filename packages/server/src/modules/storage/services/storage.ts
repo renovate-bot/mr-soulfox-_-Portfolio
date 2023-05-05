@@ -8,6 +8,14 @@ export interface IStorageModuleServiceResponse {
 	data?: unknown;
 }
 
+export interface IStorageModuleServiceSetFileParams {
+	type: string;
+	name: string;
+	filepath: string;
+	contentType: string;
+	encoding: BufferEncoding;
+}
+
 export interface IStorageModuleService {
 	getFiles(path: string): Promise<IStorageModuleServiceResponse>;
 	getSignedFiles(
@@ -15,11 +23,7 @@ export interface IStorageModuleService {
 		download: boolean
 	): Promise<IStorageModuleServiceResponse>;
 	setFiles(
-		type: string,
-		name: string,
-		filepath: string,
-		contentType: string,
-		encoding: BufferEncoding
+		params: IStorageModuleServiceSetFileParams
 	): Promise<IStorageModuleServiceResponse>;
 	delFiles(path: string): Promise<IStorageModuleServiceResponse>;
 	listAll(folder: string): Promise<IStorageModuleServiceResponse>;
@@ -28,14 +32,14 @@ export interface IStorageModuleService {
 export class StorageModuleService implements IStorageModuleService {
 	private client: SupabaseClient;
 	private createResponse(
-		error: Error,
+		error: unknown,
 		msg: string,
 		data?: unknown
 	): IStorageModuleServiceResponse {
 		if (error) {
 			return {
 				status: false,
-				msg: error.message,
+				msg: msg,
 			};
 		}
 
@@ -51,14 +55,13 @@ export class StorageModuleService implements IStorageModuleService {
 	}
 
 	public async getFiles(path: string): Promise<IStorageModuleServiceResponse> {
-		const {data, error} = await this.client.storage
+		const {error} = await this.client.storage
 			.from(String(process.env.BUCKET_NAME))
 			.download(path);
 
 		return this.createResponse(
-			new Error(error?.message),
-			`File ${data?.name} downloaded`,
-			data
+			error,
+			error?.message || `File ${path.split('/')[1]} downloaded`
 		);
 	}
 
@@ -72,18 +75,18 @@ export class StorageModuleService implements IStorageModuleService {
 				download: download,
 			});
 
-		return this.createResponse(new Error(error?.message), `File in ${path} signed`, {
+		return this.createResponse(error, error?.message || `File in ${path} signed`, {
 			url: data?.signedUrl,
 		});
 	}
 
-	public async setFiles(
-		type: string,
-		name: string,
-		filepath: string,
-		contentType: string,
-		encoding: BufferEncoding
-	): Promise<IStorageModuleServiceResponse> {
+	public async setFiles({
+		filepath,
+		encoding,
+		name,
+		type,
+		contentType,
+	}: IStorageModuleServiceSetFileParams): Promise<IStorageModuleServiceResponse> {
 		const file = Buffer.from(
 			fs.readFileSync(filepath, {
 				encoding: encoding,
@@ -99,9 +102,14 @@ export class StorageModuleService implements IStorageModuleService {
 				contentType: contentType,
 			});
 
+		fs.rmSync(filepath, {
+			maxRetries: 10,
+			recursive: true,
+		});
+
 		return this.createResponse(
-			new Error(error?.message),
-			`File saved successfully in ${data?.path}`,
+			error,
+			error?.message || `File saved successfully in ${data?.path}`,
 			{filepath: data?.path}
 		);
 	}
@@ -112,8 +120,8 @@ export class StorageModuleService implements IStorageModuleService {
 			.remove([path]);
 
 		return this.createResponse(
-			new Error(error?.message),
-			`file in ${path} deleted with success`,
+			error,
+			error?.message || `file in ${path} deleted with success`,
 			data
 		);
 	}
@@ -130,10 +138,6 @@ export class StorageModuleService implements IStorageModuleService {
 				sortBy: {column: 'name', order: 'asc'},
 			});
 
-		return this.createResponse(
-			new Error(error?.message),
-			`All files in ${folder}`,
-			data
-		);
+		return this.createResponse(error, error?.message || `All files in ${folder}`, data);
 	}
 }

@@ -5,7 +5,7 @@ export interface IHealthRoute {
 }
 
 export class HealthRoute implements IHealthRoute {
-	public health(_req: Request, res: Response) {
+	public health(_req: Request, res: Response): void {
 		res.status(200).json({
 			status: 'OK',
 		});
