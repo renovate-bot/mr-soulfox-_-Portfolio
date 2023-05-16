@@ -1,11 +1,13 @@
 import {UserDetailsRoute} from './userDetails';
 import {UserRepositoryRegistryRoute} from './userRepositoryRegistry';
 import {UserRegistryRoute} from './userRegistry';
+import {UserConfigRoute} from './userConfig';
+import {UserDeleteRoute} from './userDelete';
 
 export const userServiceList = [
 	{
 		method: 'GET',
-		path: '/user/details',
+		path: '/user/details/:username',
 		operation: new UserDetailsRoute().details,
 	},
 	{
@@ -17,5 +19,15 @@ export const userServiceList = [
 		method: 'POST',
 		path: '/:user/repository/registry',
 		operation: new UserRepositoryRegistryRoute().registry,
+	},
+	{
+		method: 'PUT',
+		path: '/:user/config',
+		operation: new UserConfigRoute().config,
+	},
+	{
+		method: 'DELETE',
+		path: '/:user',
+		operation: new UserDeleteRoute().delete,
 	},
 ];

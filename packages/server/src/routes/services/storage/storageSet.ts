@@ -22,18 +22,8 @@ export class StorageSetRoute implements IStorageSetRoute {
 
 		const response = await storageModuleController.storage.setFiles(setFileObject);
 
-		if (response.status) {
-			res.status(200).json({
-				status: `OK`,
-				msg: response.msg,
-				data: response.data,
-			});
-
-			return;
-		}
-
-		res.status(400).json({
-			status: `BAD`,
+		res.status(response.status ? 200 : 400).json({
+			status: response.status ? 'OK' : 'Error',
 			msg: response.msg,
 			data: response.data,
 		});

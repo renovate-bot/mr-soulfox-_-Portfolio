@@ -10,17 +10,17 @@ export interface IDatabaseModuleService {
 	insert(table: string, insert: unknown): Promise<IDatabaseModuleServiceResponse>;
 	select(
 		table: string,
-		equal: Array<string[2]>
+		equal: {col: string; row: string}
 	): Promise<IDatabaseModuleServiceResponse>;
 	selectAll(table: string): Promise<IDatabaseModuleServiceResponse>;
 	update(
 		table: string,
-		equal: Array<string[2]>,
+		equal: {col: string; row: string},
 		insert: unknown
 	): Promise<IDatabaseModuleServiceResponse>;
 	delete(
 		table: string,
-		equal: Array<string[2]>
+		equal: {col: string; row: string}
 	): Promise<IDatabaseModuleServiceResponse>;
 }
 
@@ -55,9 +55,12 @@ export class DatabaseModuleService implements IDatabaseModuleService {
 
 	public async select(
 		table: string,
-		equal: Array<string[2]>
+		equal: {col: string; row: string}
 	): Promise<IDatabaseModuleServiceResponse> {
-		const {data, error} = await this.client.from(table).select().eq(equal[0], equal[1]);
+		const {data, error} = await this.client
+			.from(table)
+			.select()
+			.eq(equal.col, equal.row);
 
 		return this.setResponse(new Error(error?.message), data);
 	}
@@ -70,22 +73,22 @@ export class DatabaseModuleService implements IDatabaseModuleService {
 
 	public async update(
 		table: string,
-		equal: Array<string[2]>,
+		equal: {col: string; row: string},
 		insert: unknown
 	): Promise<IDatabaseModuleServiceResponse> {
 		const {data, error} = await this.client
 			.from(table)
 			.update(insert)
-			.eq(equal[0], equal[1]);
+			.eq(equal.col, equal.row);
 
 		return this.setResponse(new Error(error?.message), data);
 	}
 
 	public async delete(
 		table: string,
-		equal: Array<string[2]>
+		equal: {col: string; row: string}
 	): Promise<IDatabaseModuleServiceResponse> {
-		const {error} = await this.client.from(table).delete().eq(equal[0], equal[1]);
+		const {error} = await this.client.from(table).delete().eq(equal.col, equal.row);
 
 		return this.setResponse(new Error(error?.message));
 	}
